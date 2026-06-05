@@ -10,6 +10,10 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
 
+import javafx.animation.Timeline;
+import javafx.animation.KeyFrame;
+import javafx.util.Duration;
+
 // Java
 import java.time.*;
 import java.util.*;
@@ -18,6 +22,7 @@ import java.util.*;
 import com.mycompany.polloshermanos.objects.Mesa;
 import com.mycompany.polloshermanos.objects.Reservacion;
 import com.mycompany.polloshermanos.daos.ReservacionDAO;
+import com.mycompany.polloshermanos.objects.SesionUsuario;
 
 // Colecciones
 import javafx.collections.FXCollections;
@@ -65,6 +70,8 @@ public class MesasController {
 
         // 🔥 CARGAR DESDE BD
         listaReservaciones.addAll(reservacionDAO.obtenerReservaciones());
+        
+        iniciarCancelacionAutomatica();
     }
 
     // =========================
@@ -277,6 +284,107 @@ public class MesasController {
         info("Cancelada");
         mostrarInfoMesa();
     }
+    
+    // =========================
+// CANCELACIÓN AUTOMÁTICA
+// =========================
+private void iniciarCancelacionAutomatica() {
+
+    // Revisará cada minuto
+    Timeline timeline = new Timeline(
+        new KeyFrame(Duration.minutes(1), e -> {
+            verificarReservacionesExpiradas();
+        })
+    );
+
+    timeline.setCycleCount(Timeline.INDEFINITE);
+    timeline.play();
+
+    // Ejecuta una vez al iniciar
+    verificarReservacionesExpiradas();
+}
+
+
+private void verificarReservacionesExpiradas() {
+
+    LocalDateTime ahora = LocalDateTime.now();
+
+    for (Reservacion r : listaReservaciones) {
+
+        try {
+
+            // FA-02: Reservación ya atendida
+            if (r.getEstado().equalsIgnoreCase("Atendida")) {
+                continue;
+            }
+
+            // Solo revisar activas/pendientes
+            if (!r.getEstado().equalsIgnoreCase("Activa")) {
+                continue;
+            }
+
+            LocalDate fecha = LocalDate.parse(
+                    r.getFecha()
+            );
+
+            LocalTime hora = LocalTime.parse(
+                    r.getHora()
+            );
+
+            LocalDateTime fechaReserva =
+                    LocalDateTime.of(fecha,hora);
+
+            long minutosTranscurridos =
+        java.time.Duration
+        .between(fechaReserva, ahora)
+        .toMinutes();
+
+            // Flujo principal:
+            // si pasaron más de 15 min
+            if (minutosTranscurridos > 15) {
+
+                r.setEstado("Cancelada");
+
+                Mesa mesa = mesas.get(
+                        r.getIdMesa()
+                );
+
+                if (mesa != null) {
+                    mesa.setEstado("Disponible");
+                }
+
+                // Intentar actualizar BD
+                try {
+
+                    // Debes tener este método en DAO
+                    reservacionDAO.actualizarReservacion(r);
+
+                    System.out.println(
+                        "Reservación cancelada automáticamente"
+                    );
+
+                } catch (Exception ex) {
+
+                    // EX-01
+                    System.out.println(
+                        "Error al actualizar reservación: "
+                        + ex.getMessage()
+                    );
+                }
+
+            }
+
+        } catch(Exception e){
+
+            System.out.println(
+                "Error verificando reservación: "
+                + e.getMessage()
+            );
+        }
+    }
+
+    mostrarInfoMesa();
+}
 
     // =========================
     // TIEMPO
@@ -290,7 +398,9 @@ public class MesasController {
                 LocalTime.parse(r.getHora())
             );
 
-            long min = Duration.between(ahora, reserva).toMinutes();
+            long min = java.time.Duration
+        .between(ahora, reserva)
+        .toMinutes();
             lblTiempo.setText("Tiempo restante: " + min + " min");
 
         } catch (Exception e) {
@@ -302,20 +412,70 @@ public class MesasController {
     // SALIR
     // =========================
     @FXML
-    private void salir(ActionEvent event) {
+private void salir(ActionEvent event) {
 
-        try {
-            Parent root = FXMLLoader.load(
-                getClass().getResource("/com/mycompany/polloshermanos/login.fxml")
-            );
+    try {
 
-            Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
+        Alert confirmacion =
+            new Alert(Alert.AlertType.CONFIRMATION);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        confirmacion.setTitle("Cerrar sesión");
+        confirmacion.setHeaderText(null);
+        confirmacion.setContentText(
+            "¿Deseas cerrar sesión?"
+        );
+
+        Optional<ButtonType> resultado =
+            confirmacion.showAndWait();
+
+        if (resultado.isPresent()
+                && resultado.get() == ButtonType.CANCEL) {
+
+            return;
         }
+
+        SesionUsuario.cerrarSesion();
+
+        Parent root = FXMLLoader.load(
+            getClass().getResource(
+                "/com/mycompany/polloshermanos/login.fxml"
+            )
+        );
+
+        Stage stage =
+            (Stage) ((Button) event.getSource())
+                .getScene()
+                .getWindow();
+
+        stage.setScene(new Scene(root));
+
+        Alert exito =
+            new Alert(Alert.AlertType.INFORMATION);
+
+        exito.setTitle("Pollos Hermanos");
+        exito.setHeaderText(null);
+        exito.setContentText(
+            "Sesión cerrada correctamente"
+        );
+
+        exito.showAndWait();
+
+    } catch (Exception e) {
+
+        Alert error =
+            new Alert(Alert.AlertType.ERROR);
+
+        error.setTitle("Error");
+        error.setHeaderText(null);
+        error.setContentText(
+            "Error al cerrar sesión"
+        );
+
+        error.showAndWait();
+
+        e.printStackTrace();
     }
+}
 
     // =========================
     // ALERTAS

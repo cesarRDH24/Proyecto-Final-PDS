@@ -1,6 +1,7 @@
 package com.mycompany.polloshermanos.controllers;
 
 import com.mycompany.polloshermanos.daos.PedidoDAO;
+import com.mycompany.polloshermanos.objects.SesionUsuario;
 import lib.SqlLib;
 
 import java.net.URL;
@@ -8,6 +9,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import javafx.animation.KeyFrame;
@@ -17,8 +19,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -136,24 +140,50 @@ public class PedidosCocinaController implements Initializable {
 }
 
     @FXML
-public void salirAlLogin() {
+    public void salirAlLogin() {
 
-    try {
+        try {
 
-        FXMLLoader loader = new FXMLLoader(
-            getClass().getResource("/com/mycompany/polloshermanos/Login.fxml")
-        );
+            Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
 
-        Parent root = loader.load();
+            confirmacion.setTitle("Cerrar sesión");
+            confirmacion.setHeaderText(null);
+            confirmacion.setContentText( "¿Deseas cerrar sesión?");
 
-        Stage stage = (Stage) contenedorPedidos.getScene().getWindow();
+            Optional<ButtonType> resultado = confirmacion.showAndWait();
 
-        stage.setScene(new Scene(root));
-        stage.setTitle("Login");
-        stage.show();
+            if (resultado.isPresent() && resultado.get() == ButtonType.CANCEL) {
+                return;
+            }
 
-    } catch (Exception e) {
-        e.printStackTrace();
+            SesionUsuario.cerrarSesion();
+            FXMLLoader loader = new FXMLLoader( getClass().getResource(  "/com/mycompany/polloshermanos/Login.fxml" ) );
+            Parent root = loader.load();
+
+            Stage stage = (Stage) contenedorPedidos .getScene().getWindow();
+
+            stage.setScene(new Scene(root));
+            stage.setTitle("Login");
+            stage.show();
+
+            Alert exito = new Alert(Alert.AlertType.INFORMATION);
+
+            exito.setTitle("Pollos Hermanos");
+            exito.setHeaderText(null);
+            exito.setContentText( "Sesión cerrada correctamente");
+            exito.showAndWait();
+
+        } catch (Exception e) {
+
+            Alert error =
+                new Alert(Alert.AlertType.ERROR);
+
+            error.setTitle("Error");
+            error.setHeaderText(null);
+            error.setContentText( "Error al cerrar sesión");
+
+            error.showAndWait();
+            e.printStackTrace();
+        }
     }
-}
 }

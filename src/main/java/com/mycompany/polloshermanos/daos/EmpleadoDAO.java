@@ -119,4 +119,30 @@ public class EmpleadoDAO {
             e.printStackTrace();
         }
     }
+    
+    //CASO DE USO 18
+    // Obtener id_empleado a partir de nombre y rol
+    public int obtenerIdPorNombreYRol(String nombre, String rol) {
+        int idEmpleado = -1;
+        String sql = "SELECT e.id_empleado "
+                + "FROM empleados e "
+                + "INNER JOIN roles r ON e.id_rol = r.id_rol "
+                + "WHERE e.nombre = ? AND r.nombre_rol = ?";
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, nombre);
+            ps.setString(2, rol);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                idEmpleado = rs.getInt("id_empleado");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return idEmpleado;
+    }
 }
+
+
+

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: EEF20C;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.polloshermanos.controllers.AsistenciaController">
+   <children>
+      <Label layoutX="144.0" layoutY="14.0" prefHeight="48.0" prefWidth="349.0" text="Registro de asistencia">
+         <font>
+            <Font name="Verdana Bold Italic" size="27.0" />
+         </font>
+      </Label>
+      <ImageView fitHeight="278.0" fitWidth="245.0" layoutX="21.0" layoutY="69.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../images/personalPollos.jpeg" />
+         </image>
+      </ImageView>
+      <TextField fx:id="txtNombre" layoutX="294.0" layoutY="89.0" prefHeight="26.0" prefWidth="175.0" promptText="Nombre del empleado" />
+      <ComboBox fx:id="comboRol" layoutX="295.0" layoutY="135.0" prefHeight="26.0" prefWidth="175.0" promptText="Rol" />
+      <DatePicker fx:id="datePickerFecha" layoutX="295.0" layoutY="179.0" promptText="Seleccionat fecha" />
+      <Button fx:id="btnRegistrar" layoutX="324.0" layoutY="236.0" mnemonicParsing="false" onAction="#registrarAsistencia" prefHeight="34.0" prefWidth="134.0" style="-fx-background-color: D12424; -fx-background-radius: 10;" text="Registrar asistencia" textFill="#fcfafa" />
+      <Button fx:id="regresoLogin" layoutX="513.0" layoutY="361.0" mnemonicParsing="false" onAction="#backLogin" prefHeight="26.0" prefWidth="60.0" style="-fx-background-color: D12424;" text="Login" textFill="WHITE" />
+   </children>
+</AnchorPane>

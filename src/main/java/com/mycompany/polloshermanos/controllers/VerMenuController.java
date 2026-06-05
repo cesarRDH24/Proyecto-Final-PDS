@@ -14,8 +14,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -27,30 +29,34 @@ import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.stage.Stage;
 
 public class VerMenuController implements Initializable {
-    
+
     @FXML
     private Button btnRegresar;
 
     @FXML
     private TableView<Producto> tablaIzquierda;
-    
+
     @FXML
     private TableColumn<Producto, String> colPlatillo;
-    
+
     @FXML
     private TableColumn<Producto, Double> colPrecio;
 
     @FXML
     private TableView<Producto> tablaDerecha;
-    
+
     @FXML
     private TableColumn<Producto, String> colPlatillo2;
-    
+
     @FXML
     private TableColumn<Producto, Double> colPrecio2;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        cargarProductosCliente();
+    }
+
+    public void cargarProductosCliente() {
         try {
             Connection con = lib.SqlLib.getInstance().getConnection();
             ProductoDAO dao = new ProductoDAO(con);
@@ -70,7 +76,26 @@ public class VerMenuController implements Initializable {
             tablaDerecha.setItems(listaDerecha);
 
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
-    
+
+    @FXML
+    private void salirAlLogin(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/mycompany/polloshermanos/login.fxml"));
+            Parent root = loader.load();
+
+            // Reutilizar la ventana actual
+            Stage stage = (Stage) btnRegresar.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Los Pollos Hermanos - Login");
+            // No uses stage.show() aquí, porque ya está visible
+            // stage.show();  <-- quítalo
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

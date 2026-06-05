@@ -22,12 +22,14 @@ public class ReservacionDAO {
 
         List<Reservacion> lista = new ArrayList<>();
 
-        String sql = "SELECT r.id_reservacion, r.id_mesa, c.id_cliente, c.nombre AS cliente, " +
-                     "m.numero_mesa, m.capacidad, r.fecha, r.hora, r.estado " +
-                     "FROM reservaciones r " +
-                     "INNER JOIN clientes c ON r.id_cliente = c.id_cliente " +
-                     "INNER JOIN mesas m ON r.id_mesa = m.id_mesa " +
-                     "WHERE r.estado = 'Activa'";
+        String sql =
+"SELECT r.id_reservacion, r.id_mesa, c.id_cliente, " +
+"r.nombre_cliente AS cliente, " +
+"m.numero_mesa, m.capacidad, r.fecha, r.hora, r.estado " +
+"FROM reservaciones r " +
+"INNER JOIN clientes c ON r.id_cliente = c.id_cliente " +
+"INNER JOIN mesas m ON r.id_mesa = m.id_mesa " +
+"WHERE r.estado='Activa'";
 
         try (PreparedStatement ps = con.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -61,24 +63,28 @@ public class ReservacionDAO {
     // =========================
     public boolean insertarReservacion(Reservacion r) {
 
-        String sql = "INSERT INTO reservaciones (id_mesa, id_cliente, fecha, hora, estado) VALUES (?, ?, ?, ?, ?)";
+    String sql =
+    "INSERT INTO reservaciones " +
+    "(id_mesa,id_cliente,nombre_cliente,fecha,hora,estado) " +
+    "VALUES(?,?,?,?,?,?)";
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
+    try (PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setInt(1, r.getIdMesa());
-            ps.setInt(2, r.getIdCliente()); // 🔥 clave
-            ps.setString(3, r.getFecha());
-            ps.setString(4, r.getHora());
-            ps.setString(5, r.getEstado());
+        ps.setInt(1, r.getIdMesa());
+        ps.setInt(2, r.getIdCliente());
+        ps.setString(3, r.getNombreCliente());
+        ps.setString(4, r.getFecha());
+        ps.setString(5, r.getHora());
+        ps.setString(6, r.getEstado());
 
-            ps.executeUpdate();
-            return true;
+        ps.executeUpdate();
+        return true;
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        return false;
     }
+}
 
     // =========================
     // ELIMINAR (CANCELAR)
@@ -98,4 +104,30 @@ public class ReservacionDAO {
             return false;
         }
     }
+    
+    
+     // =========================
+ // ACTUALIZAR ESTADO
+ // =========================
+ public boolean actualizarReservacion(Reservacion r) {
+
+     String sql = "UPDATE reservaciones " +
+                  "SET estado = ? " +
+                  "WHERE id_reservacion = ?";
+
+     try (PreparedStatement ps = con.prepareStatement(sql)) {
+
+         ps.setString(1, r.getEstado());
+         ps.setInt(2, r.getIdReservacion());
+
+         ps.executeUpdate();
+         return true;
+
+     } catch (Exception e) {
+
+         e.printStackTrace();
+         return false;
+     }
+ }
+    
 }

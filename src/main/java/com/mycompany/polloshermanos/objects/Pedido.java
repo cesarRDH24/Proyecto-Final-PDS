@@ -10,6 +10,9 @@ public class Pedido {
     private LocalDateTime fecha;
     private String estado;
 
+
+
+
     public Pedido() {
     }
 
@@ -34,6 +37,8 @@ public class Pedido {
 
     public LocalDateTime getFecha() { return fecha; }
     public void setFecha(LocalDateTime fecha) { this.fecha = fecha; }
+    
+ 
 
     public String getEstado() { return estado; }
     public void setEstado(String estado) { this.estado = estado; }

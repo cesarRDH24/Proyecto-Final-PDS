@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: E62D09;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.polloshermanos.controllers.InicioAdminController">
+   <children>
+      <Label layoutX="89.0" layoutY="23.0" text="Inicio Administrador" textFill="WHITE">
+         <font>
+            <Font name="Cooper Black" size="39.0" />
+         </font>
+      </Label>
+      <ImageView fitHeight="218.0" fitWidth="222.0" layoutX="27.0" layoutY="119.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../images/polloAdmin.jpeg" />
+         </image>
+      </ImageView>
+      <Button fx:id="btnVolver" layoutX="34.0" layoutY="344.0" mnemonicParsing="false" onAction="#volverLogin" prefHeight="31.0" prefWidth="64.0" style="-fx-background-color: FFEC0A;" text="Volver">
+         <font>
+            <Font name="Lucida Bright Demibold Italic" size="13.0" />
+         </font>
+      </Button>
+      <Button fx:id="actualizarMenu" layoutX="384.0" layoutY="103.0" mnemonicParsing="false" onAction="#administrarMenu" prefHeight="46.0" prefWidth="170.0" style="-fx-background-color: FFEC0A;" text="Actualizar Menu">
+         <font>
+            <Font name="Lucida Bright Demibold Italic" size="14.0" />
+         </font>
+      </Button>
+      <Button fx:id="btnReporte" layoutX="384.0" layoutY="170.0" mnemonicParsing="false" onAction="#abrirReporte" prefHeight="46.0" prefWidth="170.0" style="-fx-background-color: FFEC0A;" text="Gestionar Inventario">
+         <font>
+            <Font name="Lucida Bright Demibold Italic" size="14.0" />
+         </font>
+      </Button>
+      <Button fx:id="btnReporteDiario" layoutX="384.0" layoutY="234.0" mnemonicParsing="false" onAction="#abrirReporteDiario" prefHeight="46.0" prefWidth="170.0" style="-fx-background-color: FFEC0A;" text="Reporte Diario">
+         <font>
+            <Font name="Lucida Bright Demibold Italic" size="14.0" />
+         </font>
+      </Button>
+      <Button fx:id="btnReporteMensual" layoutX="384.0" layoutY="295.0" mnemonicParsing="false" onAction="#abrirReporteMensual" prefHeight="46.0" prefWidth="170.0" style="-fx-background-color: FFEC0A;" text="Reporte Mensual">
+         <font>
+            <Font name="Lucida Bright Demibold Italic" size="14.0" />
+         </font>
+      </Button>
+   </children>
+</AnchorPane>

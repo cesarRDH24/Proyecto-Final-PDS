@@ -7,7 +7,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
-
+import com.mycompany.polloshermanos.daos.ReporteVentasDAO;
+import java.sql.Connection;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -89,7 +90,7 @@ public class ConfirmacionPedidoController implements Initializable {
         alert.showAndWait();
     }
 
-    // 🔥 AQUÍ SE EJECUTA EL CASO DE USO REAL
+    //AQUÍ SE EJECUTA EL CASO DE USO REAL
     @FXML
     public void confirmarPedido(ActionEvent event) {
 
@@ -103,6 +104,11 @@ public class ConfirmacionPedidoController implements Initializable {
 
             pedidoService.confirmarPedido(idPedido);
 
+            // Caso de uso 17 para conexion con el inventario de ingredientes.
+            Connection con = SqlLib.getInstance().getConnection();
+            ReporteVentasDAO reporteDao = new ReporteVentasDAO(con);
+            reporteDao.descontarInventario(idPedido);
+        
             alerta("Pedido enviado a cocina");
 
             Parent root = FXMLLoader.load(
@@ -136,4 +142,6 @@ public class ConfirmacionPedidoController implements Initializable {
         stage.setScene(new Scene(root));
         stage.show();
     }
+    
+    
 }

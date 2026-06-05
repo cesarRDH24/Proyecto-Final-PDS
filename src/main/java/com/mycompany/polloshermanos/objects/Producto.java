@@ -9,13 +9,14 @@ public class Producto {
     private int idCategoria;
     private String categoria;
     private boolean disponible;
+    private int stock;
 
     public Producto() {
     }
 
     public Producto(int idProducto, String nombre, String descripcion,
                     double precio, int idCategoria,
-                    String categoria, boolean disponible) {
+                    String categoria, boolean disponible, int stock) {
 
         this.idProducto = idProducto;
         this.nombre = nombre;
@@ -24,6 +25,7 @@ public class Producto {
         this.idCategoria = idCategoria;
         this.categoria = categoria;
         this.disponible = disponible;
+        this.stock= stock;
     }
 
     // GETTERS Y SETTERS
@@ -78,6 +80,15 @@ public class Producto {
 
     public boolean isDisponible() {
         return disponible;
+    }
+    
+    
+       public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
     }
 
     public void setDisponible(boolean disponible) {

@@ -49,6 +49,11 @@
             <Image url="@../../../images/images.jpg" />
          </image>
       </ImageView>
+      <Button fx:id="boton1" layoutX="393.0" layoutY="328.0" mnemonicParsing="false" onAction="#salir" prefHeight="37.0" prefWidth="127.0" style="-fx-background-color: #D1201D; -fx-background-radius: 10;" text="Salir" textFill="#efefef">
+         <font>
+            <Font name="SansSerif Bold" size="14.0" />
+         </font>
+      </Button>
 
     </children>
 

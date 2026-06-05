@@ -39,6 +39,7 @@ public class SesionUsuario {
         SesionUsuario.usuario = usuario;
     }
 
+    //CU-21 CERRAR SESION
     public static void cerrarSesion() {
         idEmpleado = 0;
         nombre = null;

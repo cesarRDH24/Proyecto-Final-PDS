@@ -32,7 +32,7 @@
                               <TableColumn fx:id="colNombre" prefWidth="111.0" text="Nombre" />
                               <TableColumn fx:id="colCategoria" prefWidth="111.0" text="Categoria" />
                               <TableColumn fx:id="colPrecio" prefWidth="111.0" text="Precio" />
-                              <TableColumn fx:id="colDisponible" prefWidth="111.0" text="Estado" />
+                              <TableColumn fx:id="colStock" prefWidth="111.0" text="Stock" />
                            </columns>
                         </TableView>
                      </center>

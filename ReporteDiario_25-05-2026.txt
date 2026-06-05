@@ -1,0 +1,11 @@
+===================================
+  REPORTE DIARIO - 25-05-2026
+===================================
+Producto                  Categoría    Vendidos   Total     
+-----------------------------------
+Nuggets Azules            Entradas     1          $89.00     
+Tacos Fring               Platillos    1          $130.00    
+Pay de Limón Jesse        Postres      1          $70.00     
+-----------------------------------
+TOTAL DEL DÍA: $289.00
+===================================

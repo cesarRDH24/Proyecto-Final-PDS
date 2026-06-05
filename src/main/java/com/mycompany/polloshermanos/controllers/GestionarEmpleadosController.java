@@ -105,26 +105,82 @@ public class GestionarEmpleadosController {
         tablaEmpleados.setItems(listaEmpleados);
     }
 
+    private boolean telefonoValido(String telefono) {
+        // Solo números y exactamente 10 dígitos
+        return telefono.matches("\\d{10}");
+    }
+
+    private boolean telefonoUnico(String telefono, Integer idActual) {
+        for (Empleado e : listaEmpleados) {
+            if (e.getTelefono().equals(telefono)) {
+                // Si estamos editando, permitir el mismo teléfono del empleado actual
+                if (idActual == null || e.getIdEmpleado() != idActual) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     @FXML
     private void agregarEmpleado() {
-        Empleado emp = new Empleado();
-        emp.setNombre(txtNombre.getText());
-        emp.setTelefono(txtTelefono.getText());
-        emp.setCorreo(txtCorreo.getText());
-        emp.setUsuario(txtUsuario.getText());
-        emp.setContrasena(txtContrasena.getText());
-        emp.setRol(comboRol.getValue());
-        emp.setIdRol(comboRol.getSelectionModel().getSelectedIndex() + 1); // idRol según orden
-        emp.setFechaIngreso(dateIngreso.getValue().toString());
+        try {
+            if (txtNombre.getText().isEmpty() || txtTelefono.getText().isEmpty()
+                    || txtCorreo.getText().isEmpty() || txtUsuario.getText().isEmpty()
+                    || txtContrasena.getText().isEmpty() || comboRol.getValue() == null
+                    || dateIngreso.getValue() == null) {
+                mostrarAlerta("Campos incompletos", "Debes llenar todos los campos.");
+                return;
+            }
 
-        empleadoDAO.insertar(emp);
-        cargarEmpleados();
+            if (!telefonoValido(txtTelefono.getText())) {
+                mostrarAlerta("Teléfono inválido", "El número debe tener exactamente 10 dígitos.");
+                return;
+            }
+
+            if (!telefonoUnico(txtTelefono.getText(), null)) {
+                mostrarAlerta("Teléfono duplicado", "Ya existe un empleado con ese número.");
+                return;
+            }
+
+            Empleado emp = new Empleado();
+            emp.setNombre(txtNombre.getText());
+            emp.setTelefono(txtTelefono.getText());
+            emp.setCorreo(txtCorreo.getText());
+            emp.setUsuario(txtUsuario.getText());
+            emp.setContrasena(txtContrasena.getText());
+            emp.setRol(comboRol.getValue());
+            emp.setIdRol(comboRol.getSelectionModel().getSelectedIndex() + 1);
+            emp.setFechaIngreso(dateIngreso.getValue().toString());
+
+            empleadoDAO.insertar(emp);
+            cargarEmpleados();
+            mostrarAlerta("Éxito", "Empleado agregado correctamente.");
+
+        } catch (Exception e) {
+            mostrarAlerta("Error", "Ocurrió un error al agregar: " + e.getMessage());
+        }
     }
 
     @FXML
     private void editarEmpleado() {
-        Empleado emp = tablaEmpleados.getSelectionModel().getSelectedItem();
-        if (emp != null) {
+        try {
+            Empleado emp = tablaEmpleados.getSelectionModel().getSelectedItem();
+            if (emp == null) {
+                mostrarAlerta("Selección requerida", "Debes seleccionar un empleado para editar.");
+                return;
+            }
+
+            if (!telefonoValido(txtTelefono.getText())) {
+                mostrarAlerta("Teléfono inválido", "El número debe tener exactamente 10 dígitos.");
+                return;
+            }
+
+            if (!telefonoUnico(txtTelefono.getText(), emp.getIdEmpleado())) {
+                mostrarAlerta("Teléfono duplicado", "Ya existe otro empleado con ese número.");
+                return;
+            }
+
             emp.setNombre(txtNombre.getText());
             emp.setTelefono(txtTelefono.getText());
             emp.setCorreo(txtCorreo.getText());
@@ -136,16 +192,39 @@ public class GestionarEmpleadosController {
 
             empleadoDAO.actualizar(emp);
             cargarEmpleados();
+            mostrarAlerta("Éxito", "Empleado editado correctamente.");
+
+        } catch (Exception e) {
+            mostrarAlerta("Error", "Ocurrió un error al editar: " + e.getMessage());
         }
     }
     
     @FXML
     private void eliminarEmpleado() {
-        Empleado emp = tablaEmpleados.getSelectionModel().getSelectedItem();
-        if (emp != null) {
+        try {
+            Empleado emp = tablaEmpleados.getSelectionModel().getSelectedItem();
+            if (emp == null) {
+                mostrarAlerta("Selección requerida",
+                        "Debes seleccionar un empleado para eliminar.");
+                return;
+            }
+
             empleadoDAO.eliminar(emp.getIdEmpleado());
             cargarEmpleados();
+            mostrarAlerta("Éxito", "Empleado eliminado correctamente.");
+
+        } catch (Exception e) {
+            mostrarAlerta("Error", "Ocurrió un error al eliminar: " + e.getMessage());
         }
+    }
+    
+    // Método auxiliar para mostrar alertas
+    private void mostrarAlerta(String titulo, String mensaje) {
+        Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensaje);
+        alerta.showAndWait();
     }
 
     @FXML

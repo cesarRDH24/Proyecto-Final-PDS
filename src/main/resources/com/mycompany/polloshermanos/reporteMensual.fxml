@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="400.0" prefWidth="620.0"
+            style="-fx-background-color: E62D09;"
+            xmlns:fx="http://javafx.com/fxml/1"
+            xmlns="http://javafx.com/javafx/25"
+            fx:controller="com.mycompany.polloshermanos.controllers.ReporteMensualController">
+   <children>
+
+      <Label layoutX="120.0" layoutY="20.0"
+             text="Reporte Mensual - Materia Prima"
+             textFill="WHITE">
+         <font><Font name="Cooper Black" size="24.0"/></font>
+      </Label>
+
+      <Button fx:id="btnGenerar"
+              layoutX="20.0" layoutY="65.0"
+              text="Generar Reporte"
+              onAction="#generarReporte"
+              style="-fx-background-color: FFEC0A;"
+              prefWidth="140.0" prefHeight="31.0">
+         <font><Font name="Lucida Bright Demibold Italic" size="13.0"/></font>
+      </Button>
+
+      <TableView fx:id="tablaReporte"
+                 layoutX="20.0" layoutY="110.0"
+                 prefHeight="245.0" prefWidth="580.0">
+         <columns>
+            <TableColumn fx:id="colNombre"  text="Ingrediente"   prefWidth="160"/>
+            <TableColumn fx:id="colUnidad"  text="Unidad"        prefWidth="80"/>
+            <TableColumn fx:id="colStock"   text="Stock actual"  prefWidth="110"/>
+            <TableColumn fx:id="colMinimo"  text="Mínimo"        prefWidth="90"/>
+            <TableColumn fx:id="colEstado"  text="Estado"        prefWidth="100"/>
+         </columns>
+      </TableView>
+
+      <Button fx:id="btnExportar"
+              layoutX="200.0" layoutY="368.0"
+              text="Exportar .txt"
+              onAction="#exportarReporte"
+              style="-fx-background-color: FFEC0A;"
+              prefWidth="120.0" prefHeight="31.0">
+         <font><Font name="Lucida Bright Demibold Italic" size="13.0"/></font>
+      </Button>
+
+      <Button fx:id="btnVolver"
+              layoutX="530.0" layoutY="368.0"
+              text="Volver"
+              onAction="#volverAdmin"
+              style="-fx-background-color: FFEC0A;"
+              prefWidth="64.0" prefHeight="31.0">
+         <font><Font name="Lucida Bright Demibold Italic" size="13.0"/></font>
+      </Button>
+
+   </children>
+</AnchorPane>

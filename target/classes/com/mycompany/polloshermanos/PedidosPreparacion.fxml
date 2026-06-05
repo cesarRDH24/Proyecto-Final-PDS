@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="500.0" prefWidth="700.0"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.mycompany.polloshermanos.controllers.PedidosPreparacionController"
+            style="-fx-background-color: #1e1e1e;">
+
+    <children>
+
+        <VBox spacing="15"
+              AnchorPane.topAnchor="20"
+              AnchorPane.leftAnchor="20"
+              AnchorPane.rightAnchor="20"
+              AnchorPane.bottomAnchor="20">
+
+            <Label text="Pedidos en Preparación"
+                   style="-fx-text-fill: white;
+                          -fx-font-size: 28px;
+                          -fx-font-weight: bold;" />
+
+            <ScrollPane fitToWidth="true"
+                        VBox.vgrow="ALWAYS">
+
+                <content>
+
+                    <VBox fx:id="contenedorPedidos"
+                          spacing="10"
+                          style="-fx-padding: 10;" />
+
+                </content>
+
+            </ScrollPane>
+
+            <Button text="Regresar"
+                    onAction="#regresar"
+                    prefWidth="140"
+                    prefHeight="40"
+                    style="-fx-background-color: #dc3545;
+                           -fx-text-fill: white;
+                           -fx-font-weight: bold;
+                           -fx-background-radius: 10;" />
+
+        </VBox>
+
+    </children>
+
+</AnchorPane>
