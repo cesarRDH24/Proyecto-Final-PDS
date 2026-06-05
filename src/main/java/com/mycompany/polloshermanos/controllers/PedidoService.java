@@ -27,15 +27,15 @@ public class PedidoService {
 
         for (Producto p : productos) {
 
-            // VALIDAR STOCK
+            // 🔥 VALIDAR STOCK
             if (p.getStock() <= 0) {
                 throw new Exception("Producto agotado: " + p.getNombre());
             }
 
-            // INSERTAR EN DETALLE_PEDIDO
+            // 🔥 INSERTAR EN DETALLE_PEDIDO
             pedidoDAO.agregarProducto(idPedido, p);
 
-            // DESCONTAR STOCK
+            // 🔥 DESCONTAR STOCK
             productoDAO.descontarStock(p.getIdProducto());
         }
 
@@ -86,7 +86,7 @@ for (Producto p : productos) {
     productoDAO.descontarStock(p.getIdProducto());
 }
 
-// Regresa el pedido a cocina automáticamente
+// ✅ Regresa el pedido a cocina automáticamente
 pedidoDAO.actualizarEstado(idPedido, "Preparando");
 
 // Paso 14: devolver total recalculado

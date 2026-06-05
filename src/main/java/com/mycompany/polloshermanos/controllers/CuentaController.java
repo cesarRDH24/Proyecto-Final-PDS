@@ -25,6 +25,12 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import lib.SqlLib;
+import com.mycompany.polloshermanos.daos.FolioDAO;
+import com.mycompany.polloshermanos.objects.Folio;
+import com.mycompany.polloshermanos.objects.ReporteVentaItem;
+import java.io.FileWriter;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class CuentaController implements Initializable {
 
@@ -143,8 +149,9 @@ private void abrirPago(ActionEvent event) {
                 loader.getController();
 
         controller.setPedido(
-                cuenta.getIdPedido(),
-                cuenta.getTotal());
+        cuenta.getIdPedido(),
+        cuenta.getTotal(),
+        cuenta.getNumeroMesa());
 
         Stage ventanaActual =
                 (Stage)((Node)
@@ -170,9 +177,89 @@ private void abrirPago(ActionEvent event) {
         e.printStackTrace();
     }
 }
+@FXML
+private void ExportarFolio(ActionEvent event) {
+
+    try {
+        Cuenta cuenta =
+                tabla.getSelectionModel()
+                        .getSelectedItem();
+        
+        Connection con=
+                SqlLib
+                .getInstance()
+                .getConnection();
+
+        FolioDAO dao=
+                new FolioDAO(
+                con);
+
+        Folio folio=
+                dao.obtenerFolio(
+                cuenta.getIdPedido());
 
         
 
+        if(cuenta == null){
+
+            Alert a = new Alert(Alert.AlertType.WARNING);
+            a.setContentText("Selecciona una cuenta");
+            a.show();
+
+            return;
+        }
+
+        // Validar si ya está pagada
+        if(cuenta.getEstadoPago()
+        .equalsIgnoreCase("Sin pago")){
+
+            Alert a =
+                    new Alert(
+                    Alert.AlertType.INFORMATION);
+
+            a.setContentText(
+                    "Cuenta no pagada");
+
+            a.show();
+
+            return;
+        }
+        
+        LocalDate fecha = LocalDate.now();
+        String fechaFormato = fecha.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+        String nombreArchivo = "Folio" + folio.getNumeroFolio() + ".txt";
+
+        try (FileWriter fw = new FileWriter(nombreArchivo)) {
+
+            
+            fw.write("===================================\n");
+            fw.write("FOLIO " + folio.getNumeroFolio());
+            fw.write("===================================\n");
+            fw.write("PEDIDO" + folio.getIdPedido());
+            fw.write("Metodo de pago: "+ folio.getMetodoPago());
+            fw.write("Total: " + folio.getTotal());
+            
+            Alert exito = new Alert(Alert.AlertType.INFORMATION);
+            exito.setTitle("Reporte exportado");
+            exito.setHeaderText(null);
+            exito.setContentText("Archivo guardado como:\n" + nombreArchivo);
+            exito.showAndWait();
+
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            new Alert(Alert.AlertType.ERROR,
+                "Error al exportar el reporte.").showAndWait();
+        }
+
+    } catch(Exception e){
+
+        e.printStackTrace();
+    }
+}
+        
+     
 
 @FXML
 private void eliminarCuenta() {
@@ -295,6 +382,107 @@ private void eliminarCuenta() {
             e.printStackTrace();
         }
     }
-    
+    @FXML
+private void verFolio(){
+
+    try{
+
+        Cuenta cuenta=
+                tabla.getSelectionModel()
+                .getSelectedItem();
+
+        if(cuenta==null){
+
+            Alert a=
+                    new Alert(
+                    Alert.AlertType.WARNING);
+
+            a.setContentText(
+                    "Selecciona cuenta");
+
+            a.show();
+
+            return;
+        }
+
+        if(cuenta.getEstadoPago()
+                .equalsIgnoreCase(
+                "Sin pago")){
+
+            Alert a=
+                    new Alert(
+                    Alert.AlertType.WARNING);
+
+            a.setContentText(
+                    "Cuenta no pagada");
+
+            a.show();
+
+            return;
+        }
+
+
+        Connection con=
+                SqlLib
+                .getInstance()
+                .getConnection();
+
+        FolioDAO dao=
+                new FolioDAO(
+                con);
+
+        Folio folio=
+                dao.obtenerFolio(
+                cuenta.getIdPedido());
+
+        if(folio==null){
+
+            Alert a=
+                    new Alert(
+                    Alert.AlertType.WARNING);
+
+            a.setContentText(
+                    "No existe folio");
+
+            a.show();
+
+            return;
+        }
+
+        Alert a=
+                new Alert(
+                Alert.AlertType.INFORMATION);
+
+        a.setHeaderText(
+                "Ticket generado");
+
+        a.setContentText(
+
+        "Folio: "
+        +folio.getNumeroFolio()
+
+        +"\nPedido: "
+        +folio.getIdPedido()
+
+        +"\nMesa: "
+        +folio.getNumeroMesa()
+
+        +"\nMétodo: "
+        +folio.getMetodoPago()
+
+        +"\nTotal: $"
+        +folio.getTotal()
+
+        );
+
+        a.show();
+
+    }
+    catch(Exception e){
+
+        e.printStackTrace();
+    }
+
+}
     
 }

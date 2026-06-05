@@ -12,6 +12,9 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 
+import com.mycompany.polloshermanos.daos.FolioDAO;
+import com.mycompany.polloshermanos.objects.Folio;
+
 /**
  * FXML Controller class
  *
@@ -39,6 +42,10 @@ public class PagoController {
     private Label lblMensaje;
     
     private int idPedido;
+    
+    private double totalCuenta;
+    
+    private int numeroMesa;
 
     @FXML
     public void initialize() {
@@ -59,81 +66,212 @@ public void recibirPedido(int idPedido){
 
   @FXML
 private void registrarPago() {
+
     try {
-        String metodo = cbMetodo.getValue();
-        if (metodo == null) {
-            lblMensaje.setText("Seleccione método");
+
+        String metodo =
+                cbMetodo.getValue();
+
+        if(metodo==null){
+
+            lblMensaje.setText(
+                    "Seleccione método");
+
             return;
         }
 
-        Connection con = SqlLib.getInstance().getConnection();
+        Connection con=
+                SqlLib.getInstance()
+                .getConnection();
 
-        // Verifica que el pedido exista
-        String verificar = "SELECT COUNT(*) FROM pedidos WHERE id_pedido=?";
-        PreparedStatement psVerificar = con.prepareStatement(verificar);
-        psVerificar.setInt(1, idPedido);
-        ResultSet rs = psVerificar.executeQuery();
+
+        // verificar que pedido exista
+
+        String verificar=
+        "SELECT COUNT(*) " +
+        "FROM pedidos " +
+        "WHERE id_pedido=?";
+
+        PreparedStatement psVerificar=
+                con.prepareStatement(
+                verificar);
+
+        psVerificar.setInt(
+                1,
+                idPedido);
+
+        ResultSet rs=
+                psVerificar.executeQuery();
+
         rs.next();
-        if (rs.getInt(1) == 0) {
-            lblMensaje.setText("La cuenta ya fue eliminada");
+
+        if(rs.getInt(1)==0){
+
+            lblMensaje.setText(
+                    "La cuenta ya fue eliminada");
+
             return;
         }
 
-        // ✅ Verifica que no esté ya pagado
-        String verificarPago = "SELECT COUNT(*) FROM pagos WHERE id_pedido = ?";
-        PreparedStatement psPago = con.prepareStatement(verificarPago);
-        psPago.setInt(1, idPedido);
-        ResultSet rsPago = psPago.executeQuery();
+
+        // verificar que no esté pagado
+
+        String verificarPago=
+        "SELECT COUNT(*) " +
+        "FROM pagos " +
+        "WHERE id_pedido=?";
+
+        PreparedStatement psPago=
+                con.prepareStatement(
+                verificarPago);
+
+        psPago.setInt(
+                1,
+                idPedido);
+
+        ResultSet rsPago=
+                psPago.executeQuery();
+
         rsPago.next();
-        if (rsPago.getInt(1) > 0) {
-            lblMensaje.setText("Este pedido ya fue pagado");
+
+        if(rsPago.getInt(1)>0){
+
+            lblMensaje.setText(
+                    "Este pedido ya fue pagado");
+
             return;
         }
 
-        double monto = Double.parseDouble(txtMonto.getText());
 
-        // ✅ Folio único con UUID
-        String folio = "TK" + java.util.UUID.randomUUID()
-                                             .toString()
-                                             .substring(0, 12)
-                                             .toUpperCase();
+        double monto=
+                Double.parseDouble(
+                txtMonto.getText());
 
-        String sql = "INSERT INTO pagos(id_pedido, metodo_pago, total, folio_ticket)" +
-                     " VALUES(?,?,?,?)";
-        PreparedStatement ps = con.prepareStatement(sql);
-        ps.setInt(1, idPedido);
-        ps.setString(2, metodo);
-        ps.setDouble(3, monto);
-        ps.setString(4, folio);
+
+        // generar folio único
+
+        String folioGenerado=
+                "TK"+
+                java.util.UUID
+                .randomUUID()
+                .toString()
+                .substring(0,12)
+                .toUpperCase();
+
+
+        // guardar pago
+
+        String sql=
+        "INSERT INTO pagos("+
+        "id_pedido,"+
+        "metodo_pago,"+
+        "total,"+
+        "folio_ticket)" +
+        " VALUES(?,?,?,?)";
+
+        PreparedStatement ps=
+                con.prepareStatement(
+                sql);
+
+        ps.setInt(
+                1,
+                idPedido);
+
+        ps.setString(
+                2,
+                metodo);
+
+        ps.setDouble(
+                3,
+                monto);
+
+        ps.setString(
+                4,
+                folioGenerado);
+
         ps.executeUpdate();
 
-        // ✅ Actualiza estado del pedido
-        String actualizarEstado =
-            "UPDATE pedidos SET estado = 'Pagado' WHERE id_pedido = ?";
-        PreparedStatement psActualizar = con.prepareStatement(actualizarEstado);
-        psActualizar.setInt(1, idPedido);
+
+        // crear objeto folio
+
+        Folio folio=
+                new Folio(
+
+                folioGenerado,
+
+                idPedido,
+
+                numeroMesa,
+
+                metodo,
+
+                monto
+        );
+
+
+        // guardar folio BD
+
+        FolioDAO dao=
+                new FolioDAO(
+                con);
+
+        dao.guardarFolio(
+                folio);
+
+
+        // actualizar estado
+
+        String actualizar=
+        "UPDATE pedidos " +
+        "SET estado='Pagado' " +
+        "WHERE id_pedido=?";
+
+        PreparedStatement psActualizar=
+                con.prepareStatement(
+                actualizar);
+
+        psActualizar.setInt(
+                1,
+                idPedido);
+
         psActualizar.executeUpdate();
 
-        lblMensaje.setText("Pago registrado correctamente ✔");
 
-    } catch (Exception e) {
-        e.printStackTrace();
-        lblMensaje.setText("Error al registrar");
+        lblMensaje.setText(
+        "Pago registrado correctamente ✔");
+
+
     }
+    catch(Exception e){
+
+        e.printStackTrace();
+
+        lblMensaje.setText(
+                "Error al registrar");
+    }
+
 }
     
     public void setPedido(
         int idPedido,
-        double total){
+        double total,
+        int numeroMesa){
 
-            this.idPedido=idPedido;
+    this.idPedido=idPedido;
 
-            txtMonto.setText(
-            String.valueOf(total));
+    this.totalCuenta=total;
 
-            txtMonto.setEditable(false);
+    this.numeroMesa=
+            numeroMesa;
 
-        }
+    txtMonto.setText(
+            String.valueOf(
+            total));
+
+    txtMonto.setEditable(
+            false);
+
+}
         @FXML
         private void salir(ActionEvent event) {
 

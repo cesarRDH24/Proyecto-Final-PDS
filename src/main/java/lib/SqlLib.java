@@ -11,7 +11,7 @@ public class SqlLib {
 
     private final String url = "jdbc:mysql://localhost:3306/pollosHermanos";
     private final String user = "root";
-    private final String pass = "cesar1734";
+    private final String pass = "Neo24040607";
 
     // 🔒 constructor privado (singleton)
     private SqlLib() throws SQLException {

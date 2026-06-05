@@ -28,7 +28,7 @@
 </columns>
 
 </TableView>
-      <ImageView fitHeight="190.0" fitWidth="249.0" layoutX="14.0" layoutY="351.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="190.0" fitWidth="249.0" layoutX="11.0" layoutY="351.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../../../images/2349150_71b56.png" />
          </image>
@@ -53,6 +53,16 @@
             <Font name="SansSerif Bold" size="18.0" />
          </font>
       </Label>
+      <Button fx:id="boton12" layoutX="18.0" layoutY="213.0" mnemonicParsing="false" onAction="#verFolio" prefHeight="37.0" prefWidth="90.0" style="-fx-background-color: #D1201D; -fx-background-radius: 10;" text="Ver Folio" textFill="#efefef">
+         <font>
+            <Font name="SansSerif Bold" size="14.0" />
+         </font>
+      </Button>
+      <Button fx:id="boton121" layoutX="18.0" layoutY="273.0" mnemonicParsing="false" onAction="#ExportarFolio" prefHeight="37.0" prefWidth="90.0" style="-fx-background-color: #D1201D; -fx-background-radius: 10;" text="Exportar" textFill="#efefef">
+         <font>
+            <Font name="SansSerif Bold" size="14.0" />
+         </font>
+      </Button>
 
 </children>
 

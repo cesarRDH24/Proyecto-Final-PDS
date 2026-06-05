@@ -1,0 +1,10 @@
+===================================
+  REPORTE DIARIO - 27-05-2026
+===================================
+Producto                  Categoría    Vendidos   Total     
+-----------------------------------
+Aros de Cebolla Heisenberg Entradas     2          $150.00    
+Papas Hermanas            Entradas     1          $65.00     
+-----------------------------------
+TOTAL DEL DÍA: $215.00
+===================================

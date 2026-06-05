@@ -39,6 +39,7 @@ public class MesasController {
     @FXML private Label lblFecha;
     @FXML private Label lblHora;
     @FXML private Label lblTiempo;
+    @FXML private Label id;
 
     private ReservacionDAO reservacionDAO;
     private Mesa mesaSeleccionada;
@@ -73,6 +74,21 @@ public class MesasController {
         
         iniciarCancelacionAutomatica();
     }
+    
+    
+    private Reservacion buscarReservacion(int idMesa) {
+
+    for (Reservacion r : listaReservaciones) {
+
+        if (r.getIdMesa() == idMesa &&
+            r.getEstado().equalsIgnoreCase("Activa")) {
+
+            return r;
+        }
+    }
+
+    return null;
+}
 
     // =========================
     // MESAS
@@ -106,16 +122,19 @@ public class MesasController {
     // =========================
     // BUSCAR
     // =========================
-    private Reservacion buscarReservacion(int idMesa) {
+    private Reservacion buscarReservacionPorCodigo(String codigo) {
 
-        for (Reservacion r : listaReservaciones) {
-            if (r.getIdMesa() == idMesa &&
-                r.getEstado().equalsIgnoreCase("Activa")) {
-                return r;
-            }
+    for (Reservacion r : listaReservaciones) {
+
+        if (r.getCodigoReserva() != null &&
+            r.getCodigoReserva().equalsIgnoreCase(codigo)) {
+
+            return r;
         }
-        return null;
     }
+
+    return null;
+}
 
     // =========================
     // MOSTRAR INFO
@@ -127,12 +146,15 @@ public class MesasController {
         lblNumero.setText("Número: " + mesaSeleccionada.getNumeroMesa());
         lblCapacidad.setText("Capacidad: " + mesaSeleccionada.getCapacidad());
         lblEstado.setText("Estado: " + mesaSeleccionada.getEstado());
+        
+        
 
         Reservacion r = buscarReservacion(mesaSeleccionada.getIdMesa());
 
         if (r != null) {
             lblFecha.setText("Fecha: " + r.getFecha());
             lblHora.setText("Hora: " + r.getHora());
+            id.setText(r.getCodigoReserva());
             calcularTiempoRestante(r);
         } else {
             lblFecha.setText("-");
@@ -188,9 +210,29 @@ public class MesasController {
                 r.setFecha(fecha.getValue().toString());
                 r.setHora(hora.getText());
                 r.setEstado("Activa");
+                
+                
 
                 // 🔥 TEMPORAL
                 r.setIdCliente(1);
+                
+                
+            String codigoReserva =
+                "RSV" +
+                (int)(Math.random()*9000 + 1000);
+            
+            r.setCodigoReserva(codigoReserva);
+            
+                    System.out.println(
+                    "Codigo generado: "
+                    + codigoReserva
+                );
+
+                    System.out.println(
+                        "Codigo en objeto: "
+                        + r.getCodigoReserva()
+                            
+                    );
 
                 return r;
             }
@@ -205,6 +247,8 @@ public class MesasController {
 
                 listaReservaciones.add(r);
                 mesaSeleccionada.setEstado("Reservada");
+                
+                id.setText(r.getCodigoReserva());
 
                 info("Guardado en BD");
                 mostrarInfoMesa();
@@ -245,16 +289,29 @@ public class MesasController {
             r.setFecha(LocalDate.now().toString());
             r.setHora(LocalTime.now().toString());
             r.setEstado("Activa");
-
-            // 🔥 TEMPORAL
             r.setIdCliente(1);
+            
+
+                            
+                            
+                            
+        
+            
+
+            
+            
 
             if (reservacionDAO.insertarReservacion(r)) {
 
                 listaReservaciones.add(r);
                 mesaSeleccionada.setEstado("Ocupada");
+                
+              
 
                 info("Asignado en BD");
+                
+                
+                
                 mostrarInfoMesa();
             }
         });
@@ -487,4 +544,50 @@ private void salir(ActionEvent event) {
     private void info(String msg) {
         new Alert(Alert.AlertType.INFORMATION, msg).showAndWait();
     }
+    
+    @FXML
+private void buscarPorCodigo() {
+
+    TextInputDialog dialog = new TextInputDialog();
+
+    dialog.setTitle("Buscar Reservación");
+    dialog.setHeaderText("Ingrese el código de reservación");
+    dialog.setContentText("Código:");
+
+    Optional<String> resultado = dialog.showAndWait();
+
+    if (resultado.isEmpty()) {
+        return;
+    }
+
+    String codigo = resultado.get().trim();
+
+    Reservacion r = buscarReservacionPorCodigo(codigo);
+
+    if (r == null) {
+
+        error("No se encontró la reservación");
+        return;
+    }
+
+    Mesa mesa = mesas.get(r.getIdMesa());
+
+    if (mesa != null) {
+
+        mesaSeleccionada = mesa;
+
+        lblNumero.setText("Número: " + mesa.getNumeroMesa());
+        lblCapacidad.setText("Capacidad: " + mesa.getCapacidad());
+        lblEstado.setText("Estado: " + mesa.getEstado());
+
+        lblFecha.setText("Fecha: " + r.getFecha());
+        lblHora.setText("Hora: " + r.getHora());
+
+        calcularTiempoRestante(r);
+
+        id.setText(r.getCodigoReserva());
+
+        info("Reservación encontrada");
+    }
+}
 }

@@ -25,6 +25,7 @@ public class ReservacionDAO {
         String sql =
 "SELECT r.id_reservacion, r.id_mesa, c.id_cliente, " +
 "r.nombre_cliente AS cliente, " +
+"r.codigo_reserva, " +
 "m.numero_mesa, m.capacidad, r.fecha, r.hora, r.estado " +
 "FROM reservaciones r " +
 "INNER JOIN clientes c ON r.id_cliente = c.id_cliente " +
@@ -47,6 +48,9 @@ public class ReservacionDAO {
                 r.setFecha(rs.getString("fecha"));
                 r.setHora(rs.getString("hora"));
                 r.setEstado(rs.getString("estado"));
+                r.setCodigoReserva(
+    rs.getString("codigo_reserva")
+);
 
                 lista.add(r);
             }
@@ -57,6 +61,8 @@ public class ReservacionDAO {
 
         return lista;
     }
+    
+    
 
     // =========================
     // INSERTAR RESERVACION
@@ -64,9 +70,9 @@ public class ReservacionDAO {
     public boolean insertarReservacion(Reservacion r) {
 
     String sql =
-    "INSERT INTO reservaciones " +
-    "(id_mesa,id_cliente,nombre_cliente,fecha,hora,estado) " +
-    "VALUES(?,?,?,?,?,?)";
+"INSERT INTO reservaciones\n" +
+"(id_mesa,id_cliente,nombre_cliente,fecha,hora,codigo_reserva,estado)\n" +
+"VALUES(?,?,?,?,?,?,?)";
 
     try (PreparedStatement ps = con.prepareStatement(sql)) {
 
@@ -75,7 +81,13 @@ public class ReservacionDAO {
         ps.setString(3, r.getNombreCliente());
         ps.setString(4, r.getFecha());
         ps.setString(5, r.getHora());
-        ps.setString(6, r.getEstado());
+        ps.setString(6, r.getCodigoReserva());
+        ps.setString(7, r.getEstado());
+
+            System.out.println(
+                "Guardando codigo: "
+                + r.getCodigoReserva()
+            );
 
         ps.executeUpdate();
         return true;
@@ -129,5 +141,56 @@ public class ReservacionDAO {
          return false;
      }
  }
-    
+    public Reservacion buscarPorCodigo(String codigo) {
+
+    String sql =
+        "SELECT * FROM reservaciones WHERE codigo_reserva = ?";
+
+    try (PreparedStatement ps = con.prepareStatement(sql)) {
+
+        ps.setString(1, codigo);
+
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+
+            Reservacion r = new Reservacion();
+
+            r.setIdReservacion(
+                rs.getInt("id_reservacion")
+            );
+
+            r.setCodigoReserva(
+                rs.getString("codigo_reserva")
+            );
+
+            r.setNombreCliente(
+                rs.getString("nombre_cliente")
+            );
+
+            r.setFecha(
+                rs.getString("fecha")
+            );
+
+            r.setHora(
+                rs.getString("hora")
+            );
+
+            r.setEstado(
+                rs.getString("estado")
+            );
+
+            r.setIdMesa(
+                rs.getInt("id_mesa")
+            );
+
+            return r;
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return null;
+}
 }
